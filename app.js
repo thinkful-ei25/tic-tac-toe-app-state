@@ -16,13 +16,16 @@ const gameState = {
         win: []
     };
 
+ 
+
     //dynamically updates the board based on the board in gameState
     //move should be the board passedIn after being updated
     function generateARow(move) {   
        return `
+       <div class ="board">
             <div class="row" data-row-index = "1">
-                <div class="cell" id="0">
-                    <p>${move[0]}</p>
+                <div class="cell win" id="0">
+                    <p>${move[0]} </p>
                 </div>
                 <div class="cell" id="1">
                     <p>${move[1]}</p>
@@ -43,16 +46,17 @@ const gameState = {
                 </div>
             </div>
             <div class="row" data-row-index = "3">
-            <div class="cell" id="6">
-                <p>${move[6]}</p>
-            </div>
-            <div class="cell" id="7">
-                <p>${move[7]}</p>
-            </div>
-            <div class="cell" id="8">
-                <p>${move[8]}</p>
-            </div>
+                <div class="cell" id="6">
+                    <p>${move[6]}</p>
+                </div>
+                <div class="cell" id="7">
+                    <p>${move[7]}</p>
+                </div>
+                <div class="cell" id="8">
+                    <p>${move[8]}</p>
+                </div>
         </div>
+    </div>
     `;
     }
     
@@ -63,6 +67,10 @@ const gameState = {
         //Afer a user completes their turn, the board should update the DOM.
         //If it was 1 turn, then we should display an X in the appropriate square and same for player 2
         //Should return the entire board to the DOM.
+        if (gameState.win.length !== 0) {
+            //update the class 
+        }
+
         let gameBoard = generateARow(gameState.board);
         $('.board').html(gameBoard);
     }
@@ -89,14 +97,16 @@ const gameState = {
 
     function makeMove(index) {
         const cellNum = Math.abs(index);
-        const winPattern = checkWinner(gameState.board);
+        //const winPattern = checkWinner(gameState.board); // returns null
         
         if(!checkLegalPlay(cellNum)) {
             return;
-        } if(checkLegalPlay(cellNum)) {
+        } else {
            let marker = toggleAndReturnPlayersTurn();
            gameState.board[cellNum] = marker;
-        } if (winPattern) {
+        } 
+        const winPattern = checkWinner(gameState.board);
+        if (winPattern) {
             gameState.win = winPattern;
             return;
         }
@@ -141,12 +151,14 @@ const gameState = {
     function newGame () {
         gameState.board = Array(9).fill(null),
         gameState.xIsNext = false,
-        gameState.winPattern = null
+        gameState.winPattern = []
     }
 
     function handleResetGame() {
-        newGame();
-        renderBoard();
+        $('#new-game').on('click', function() {
+            newGame();
+            renderBoard();
+        });
     }
 
 
@@ -173,10 +185,9 @@ const gameState = {
 function handleGameBoard() {
     renderBoard();
     handleATurn();
-
+    handleResetGame();
 }
 
 // Event Listeners
 
 $(handleGameBoard);
-$('#new-game').click(handleResetGame());
