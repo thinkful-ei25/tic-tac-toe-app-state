@@ -21,43 +21,30 @@ const gameState = {
     //dynamically updates the board based on the board in gameState
     //move should be the board passedIn after being updated
     function generateARow(move) {   
-       return `
-       <div class ="board">
-            <div class="row" data-row-index = "1">
-                <div class="cell win" id="0">
-                    <p>${move[0]} </p>
-                </div>
-                <div class="cell" id="1">
-                    <p>${move[1]}</p>
-                </div>
-                <div class="cell" id="2">
-                    <p>${move[2]}</p>
-                </div>
-            </div>
-            <div class="row" data-row-index = "2">
-                <div class="cell" id="3">
-                    <p>${move[3]}</p>
-                </div>
-                <div class="cell" id="4">
-                    <p>${move[4]}</p>
-                </div>
-                <div class="cell" id="5">
-                    <p>${move[5]}</p>
-                </div>
-            </div>
-            <div class="row" data-row-index = "3">
-                <div class="cell" id="6">
-                    <p>${move[6]}</p>
-                </div>
-                <div class="cell" id="7">
-                    <p>${move[7]}</p>
-                </div>
-                <div class="cell" id="8">
-                    <p>${move[8]}</p>
-                </div>
-        </div>
-    </div>
-    `;
+        let template = '<div class="board">';
+
+        gameState.board.forEach((cell, index) => {
+            if(index === 0 || index === 3 || index === 6 ) {
+                template += '<div class="row">';
+            }
+
+        let winClass = gameState.win.includes(index) ? ' win' : '';
+            
+        
+            template += ` 
+                <div class="cell${winClass}" id="${index}">
+                    <p> ${cell || '&nbsp;'} </p>
+                </div>`;
+
+            if(index === 2 || index === 5 || index === 8 ) {
+                template += '</div>';
+            }
+        });
+
+        template += '</div>';
+
+        return template;
+
     }
     
     //Afer a user completes their turn, the board should update the DOM.
@@ -67,12 +54,9 @@ const gameState = {
         //Afer a user completes their turn, the board should update the DOM.
         //If it was 1 turn, then we should display an X in the appropriate square and same for player 2
         //Should return the entire board to the DOM.
-        if (gameState.win.length !== 0) {
-            //update the class 
-        }
 
         let gameBoard = generateARow(gameState.board);
-        $('.board').html(gameBoard);
+        $('.game').html(gameBoard);
     }
 
     function toggleAndReturnPlayersTurn() {
@@ -116,7 +100,7 @@ const gameState = {
 
     function handleATurn() {
         //Listen for when a user clicks on the game board.
-        $('.board').on('click', function(event) {
+        $('.game').on('click', function(event) {
 
         //get ID of cell and pass as the index to checkLegalPlay
         let index = $(event.target).closest('.cell').attr('id');
@@ -133,7 +117,7 @@ const gameState = {
     }
 
     function checkWinner(board) {
-        const winArray = [[0,3,6], [1,4,7], [2,5,8],[0,1,2],[3,4,5],[6,7,8], [0,4,8],[2,4,7]];
+        const winArray = [[0,3,6], [1,4,7], [2,5,8],[0,1,2],[3,4,5],[6,7,8], [0,4,8],[2,4,6]];
         
         for(let i = 0; i < winArray.length; i++) {
             const winnerFound = winArray[i];
@@ -151,7 +135,7 @@ const gameState = {
     function newGame () {
         gameState.board = Array(9).fill(null),
         gameState.xIsNext = false,
-        gameState.winPattern = []
+        gameState.win = []
     }
 
     function handleResetGame() {
